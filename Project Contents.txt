@@ -1,0 +1,36 @@
+######  Content of the zip file   ###########
+
+           &
+
+     Instructions on usage of codes and files
+
+##################################################
+
+# Contents of zip file
+
+1) Project Report: Detailed report about project and the description and constraints
+
+2) BDM SQL: The file which contains SQL commands/ script to generate our database
+
+3) FINAL SQL QUERY: The notepad file which has the code to get the final output of the SQL query
+
+4) form1, form2, form3, and form4 : files that contain html codes.
+
+5) Folders containing screenshots of the web application.
+
+
+######################################################
+
+# Instructions to run our code:
+
+1) The codes to create our database is mentioned in the 'BDM SQL' file. Starting from creating a database to implementing final SQL query.
+
+2) To run the web application we need to make change to the path provided in the '.py' files
+
+3) to successfully get the output create the database and the tables in your computer and copy the codes from BDM SQL file.
+
+
+
+
+
+ 

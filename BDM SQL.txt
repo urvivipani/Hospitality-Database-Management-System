@@ -1,0 +1,479 @@
+Enter password: **********
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 37
+Server version: 8.0.13 MySQL Community Server - GPL
+
+Copyright (c) 2000, 2018, Oracle and/or its affiliates. All rights reserved.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql> CREATE DATABASE PROJECT;
+Query OK, 1 row affected (0.11 sec)
+
+mysql> USE PROJECT;
+Database changed
+
+mysql> CREATE TABLE CLIENT (CLIENT_ID FLOAT, NAME VARCHAR(10), SSN DOUBLE, PHONE_NO VARCHAR(10), AGE INT, ROOM_PREF VARCHAR(30), PRIMARY KEY (CLIENT_ID));
+Query OK, 0 rows affected (0.16 sec)
+
+mysql> CREATE TABLE ROOM (ROOM_NO INT, TYPE VARCHAR(20), AMENITIES VARCHAR(100), PRICE FLOAT, PRIMARY KEY(ROOM_NO));
+Query OK, 0 rows affected (0.11 sec)
+
+mysql> CREATE TABLE EVENT (CLIENT_ID FLOAT, EVENT_TYPE VARCHAR(20), NO_OF_PARTICIPANTS INT, DATE DATE, NOTES VARCHAR(50),FOREIGN KEY (CLIENT_ID) REFERENCES CLIENT(CLIENT_ID));
+Query OK, 0 rows affected (0.13 sec)
+
+mysql> CREATE TABLE TRANSACTIONS (TRANSACTION_ID FLOAT, CLIENT_ID FLOAT, TRANSACTION_DATE DATE, AMOUNT FLOAT,STATUS VARCHAR (10), FOREIGN KEY (CLIENT_ID) REFERENCES CLIENT(CLIENT_ID),PRIMARY KEY(TRANSACTION_ID));
+Query OK, 0 rows affected (0.17 sec)
+
+mysql> CREATE TABLE GUEST (CLIENT_ID FLOAT, GUEST_ID FLOAT, GUEST_NAME VARCHAR (20), ROOM_NO INT, FOREIGN KEY (CLIENT_ID) REFERENCES CLIENT(CLIENT_ID), FOREIGN KEY (ROOM_NO) REFERENCES ROOM(ROOM_NO));
+Query OK, 0 rows affected (0.16 sec)
+
+mysql> SHOW TABLES;
++-------------------+
+| Tables_in_project |
++-------------------+
+| client            |
+| event             |
+| guest             |
+| reservations      |
+| room              |
+| transactions      |
++-------------------+
+6 rows in set (0.03 sec)
+
+mysql> insert into client(CLIENT_ID, NAME, SSN, PHONE_NO, AGE, ROOM_PREF) values
+    -> (101, 'Abel', 7788542601, '5512636711', 21, 'Single + Banquet'),
+    -> (102, 'Baker', 7788547729, '5552636701', 42, 'Double + Banquet'),
+    -> (103, 'Chris', 7755153387, '4844517701', 43, 'Single'),
+    -> (104, 'Debra', 3386154277, '4412738801', 44, 'Double'),
+    -> (105, 'Ethan', 5575427708, '4412738801', 45, 'Suite'),
+    -> (106, 'Frodo', 4587627878, '2022070011', 30, 'Suite + Banquet');
+Query OK, 6 rows affected (0.06 sec)
+Records: 6  Duplicates: 0  Warnings: 0
+ 
+mysql> update client set PHONE_NO = '2012131122' where CLIENT_ID = '104';
+Query OK, 1 row affected (0.06 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> select *
+    -> from client;
++-----------+-------+------------+------------+------+------------------+
+| CLIENT_ID | NAME  | SSN        | PHONE_NO   | AGE  | ROOM_PREF        |
++-----------+-------+------------+------------+------+------------------+
+|       101 | Abel  | 7788542601 | 5512636711 |   21 | Single + Banquet |
+|       102 | Baker | 7788547729 | 5552636701 |   42 | Double + Banquet |
+|       103 | Chris | 7755153387 | 4844517701 |   43 | Single           |
+|       104 | Debra | 3386154277 | 2012131122 |   44 | Double           |
+|       105 | Ethan | 5575427708 | 4412738801 |   45 | Suite            |
+|       106 | Frodo | 4587627878 | 2022070011 |   30 | Suite + Banquet  |
++-----------+-------+------------+------------+------+------------------+
+6 rows in set (0.01 sec)
+
+mysql> insert into ROOM (ROOM_NO, TYPE, AMENITIES, PRICE) values
+    -> (101, 'Single', 'Garden View', 100),
+    -> (102, 'Double', 'Beach View', 200),
+    -> (103, 'Single', 'Garden View', 100),
+    -> (104, 'Double', 'Beach View', 200),
+    -> (201, 'Single', 'Garden View', 100),
+    -> (202, 'Double', 'Beach View', 200),
+    -> (203, 'Single', 'Garden View', 100),
+    -> (204, 'Double', 'Beach View', 200),
+    -> (301, 'Suite', 'Garden View', 500),
+    -> (302, 'Suite', 'Beach View', 500),
+    -> (401, 'Banquet', 'Roof Top', 1000);
+Query OK, 11 rows affected (0.02 sec)
+Records: 11  Duplicates: 0  Warnings: 0
+
+mysql> select *
+    -> from ROOM;
++---------+---------+-------------+-------+
+| ROOM_NO | TYPE    | AMENITIES   | PRICE |
++---------+---------+-------------+-------+
+|     101 | Single  | Garden View |   100 |
+|     102 | Double  | Beach View  |   200 |
+|     103 | Single  | Garden View |   100 |
+|     104 | Double  | Beach View  |   200 |
+|     201 | Single  | Garden View |   100 |
+|     202 | Double  | Beach View  |   200 |
+|     203 | Single  | Garden View |   100 |
+|     204 | Double  | Beach View  |   200 |
+|     301 | Suite   | Garden View |   500 |
+|     302 | Suite   | Beach View  |   500 |
+|     401 | Banquet | Roof Top    |  1000 |
++---------+---------+-------------+-------+
+11 rows in set (0.00 sec)
+
+mysql> insert into EVENT (CLIENT_ID, EVENT_TYPE, NO_OF_PARTICIPANTS, DATE, NOTES) values
+    -> (102, 'Wedding', 4, '2017-01-26', 'Decorated with Orchids and Vegan Food Only'),
+    -> (101, 'Birthday', 5, '2017-04-07', 'Tarzan themed'),
+    -> (106, 'Bachelors', 4, '2017-08-28', 'Open Bar');
+Query OK, 3 rows affected (0.14 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+mysql> select *
+    -> from EVENT;
++-----------+------------+--------------------+------------+--------------------------------------------+
+| CLIENT_ID | EVENT_TYPE | NO_OF_PARTICIPANTS | DATE       | NOTES                                      |
++-----------+------------+--------------------+------------+--------------------------------------------+
+|       102 | Wedding    |                  4 | 2017-01-26 | Decorated with Orchids and Vegan Food Only |
+|       101 | Birthday   |                  5 | 2017-04-07 | Tarzan themed                              |
+|       106 | Bachelors  |                  4 | 2017-08-28 | Open Bar                                   |
++-----------+------------+--------------------+------------+--------------------------------------------+
+3 rows in set (0.00 sec)
+
+mysql> insert into TRANSACTIONS (TRANSACTION_ID, CLIENT_ID, TRANSACTION_DATE, AMOUNT,STATUS) values
+    -> (1701, 102, '2017-01-27',
+    -> 1800, 'PAID'),
+    -> (1702, 103, '2017-04-04', 2000, 'PAID');
+Query OK, 2 rows affected (0.11 sec)
+Records: 2  Duplicates: 0  Warnings: 0
+
+mysql> select * from Transactions;
++----------------+-----------+------------------+--------+--------+
+| TRANSACTION_ID | CLIENT_ID | TRANSACTION_DATE | AMOUNT | STATUS |
++----------------+-----------+------------------+--------+--------+
+|           1701 |       102 | 2017-01-27       |   1800 | PAID   |
+|           1702 |       103 | 2017-04-04       |   2000 | PAID   |
++----------------+-----------+------------------+--------+--------+
+2 rows in set (0.00 sec)
+
+mysql> insert into TRANSACTIONS (TRANSACTION_ID, CLIENT_ID, TRANSACTION_DATE, AMOUNT,STATUS) values
+    -> (1703, 105, '2017-08-08', 1500, 'PAID'),
+    -> (1704, 104, '2017-09-15', 400, 'PAID'),
+    -> (1705, 101, '2017-04-17', 1800, 'PAID'),
+    -> (1706, 106, '2017-08-24', 2000, 'PAID');
+Query OK, 4 rows affected (0.07 sec)
+Records: 4  Duplicates: 0  Warnings: 0
+
+mysql> select * from Transactions;
++----------------+-----------+------------------+--------+--------+
+| TRANSACTION_ID | CLIENT_ID | TRANSACTION_DATE | AMOUNT | STATUS |
++----------------+-----------+------------------+--------+--------+
+|           1701 |       102 | 2017-01-27       |   1800 | PAID   |
+|           1702 |       103 | 2017-04-04       |   2000 | PAID   |
+|           1703 |       105 | 2017-08-08       |   1500 | PAID   |
+|           1704 |       104 | 2017-09-15       |    400 | PAID   |
+|           1705 |       101 | 2017-04-17       |   1800 | PAID   |
+|           1706 |       106 | 2017-08-24       |   2000 | PAID   |
++----------------+-----------+------------------+--------+--------+
+6 rows in set (0.00 sec)
+
+
+mysql> select * from GUEST;
+Empty set (0.00 sec)
+
+mysql> describe GUEST;
++------------+-------------+------+-----+---------+-------+
+| Field      | Type        | Null | Key | Default | Extra |
++------------+-------------+------+-----+---------+-------+
+| CLIENT_ID  | float       | YES  | MUL | NULL    |       |
+| GUEST_ID   | float       | YES  |     | NULL    |       |
+| GUEST_NAME | varchar(20) | YES  |     | NULL    |       |
+| ROOM_NO    | int(11)     | YES  | MUL | NULL    |       |
++------------+-------------+------+-----+---------+-------+
+4 rows in set (0.02 sec)
+
+
+mysql> CREATE TABLE RESERVATIONS (CLIENT_ID FLOAT, ROOM_NO INT, CHECK_IN DATE, CHECK_OUT DATE, FOREIGN KEY (CLIENT_ID) REFERENCES CLIENT(CLIENT_ID), FOREIGN KEY (ROOM_NO) REFERENCES ROOM(ROOM_NO));
+Query OK, 0 rows affected (0.14 sec)
+
+mysql> insert into RESERVATIONS (CLIENT_ID, ROOM_NO, CHECK_IN, CHECK_OUT) values
+    -> (102, 102, '2017-01-25', '2017-01-27'),
+    -> (102, 104, '2017-01-25', '2017-01-27'),
+    -> (103, 101, '2017-03-15', '2017-04-04'),
+    -> (105, 201, '2017-04-08', '2017-04-04'),
+    -> (104, 104, '2017-09-13', '2017-09-15'),
+    -> (101, 102, '2017-04-14', '2017-04-15'),
+    -> (101, 104, '2017-04-14', '2017-04-15'),
+    -> (101, 101, '2017-04-14', '2017-04-15'),
+    -> (101, 401, '2017-04-14', '2017-04-15'),
+    -> (106, 201, '2017-08-23', '2017-08-24'),
+    -> (106, 202, '2017-08-23', '2017-08-24'),
+    -> (106, 401, '2017-08-23', '2017-08-24'),
+    -> (102, 401, '2017-08-26', '2017-08-27');
+Query OK, 13 rows affected (0.05 sec)
+Records: 13  Duplicates: 0  Warnings: 0
+
+mysql> select * from RESERVATIONS;
++-----------+---------+------------+------------+
+| CLIENT_ID | ROOM_NO | CHECK_IN   | CHECK_OUT  |
++-----------+---------+------------+------------+
+|       102 |     102 | 2017-01-25 | 2017-01-27 |
+|       102 |     104 | 2017-01-25 | 2017-01-27 |
+|       103 |     101 | 2017-03-15 | 2017-04-04 |
+|       105 |     201 | 2017-04-08 | 2017-04-04 |
+|       104 |     104 | 2017-09-13 | 2017-09-15 |
+|       101 |     102 | 2017-04-14 | 2017-04-15 |
+|       101 |     104 | 2017-04-14 | 2017-04-15 |
+|       101 |     101 | 2017-04-14 | 2017-04-15 |
+|       101 |     401 | 2017-04-14 | 2017-04-15 |
+|       106 |     201 | 2017-08-23 | 2017-08-24 |
+|       106 |     202 | 2017-08-23 | 2017-08-24 |
+|       106 |     401 | 2017-08-23 | 2017-08-24 |
+|       102 |     401 | 2017-08-26 | 2017-08-27 |
++-----------+---------+------------+------------+
+13 rows in set (0.00 sec)
+
+mysql> delete from RESERVATIONS where CLIENT_ID = '106' AND ROOM_NO = '401';
+Query OK, 1 row affected (0.09 sec)
+
+mysql> select * from RESERVATIONS;
++-----------+---------+------------+------------+
+| CLIENT_ID | ROOM_NO | CHECK_IN   | CHECK_OUT  |
++-----------+---------+------------+------------+
+|       102 |     102 | 2017-01-25 | 2017-01-27 |
+|       102 |     104 | 2017-01-25 | 2017-01-27 |
+|       103 |     101 | 2017-03-15 | 2017-04-04 |
+|       105 |     201 | 2017-04-08 | 2017-04-04 |
+|       104 |     104 | 2017-09-13 | 2017-09-15 |
+|       101 |     102 | 2017-04-14 | 2017-04-15 |
+|       101 |     104 | 2017-04-14 | 2017-04-15 |
+|       101 |     101 | 2017-04-14 | 2017-04-15 |
+|       101 |     401 | 2017-04-14 | 2017-04-15 |
+|       106 |     201 | 2017-08-23 | 2017-08-24 |
+|       106 |     202 | 2017-08-23 | 2017-08-24 |
+|       102 |     401 | 2017-08-26 | 2017-08-27 |
++-----------+---------+------------+------------+
+12 rows in set (0.00 sec)
+
+mysql> select * from guests;
+ERROR 1146 (42S02): Table 'project.guests' doesn't exist
+mysql> SELECT * FROM GUEST;
+Empty set (0.00 sec)
+
+mysql> INSERT INTO GUEST VALUES
+    -> (101, 1011, 'BOB', 102);
+Query OK, 1 row affected (0.10 sec)
+
+mysql> INSERT INTO GUEST VALUES
+    -> (101, 1012, 'Ben', 102),
+    ->  (101, 1013, 'Beth', 104),
+    -> (101, 1014, 'Bella', 104),
+    -> (101, 1010, 'Baker', 101),
+    -> (102, 1020, 'Abel', 102),
+    -> (102, 1021, 'Awan', 102),
+    -> (102, 1022, 'Adam', 104),
+    ->  (102, 1023, 'Eve', 104),
+    -> (106, 1060, 'Frodo', 201),
+    -> (106, 1061, 'Sam', 201),
+    ->  (106, 1062, 'Merry', 202),
+    -> (106, 1063, 'Pippin', 202),
+    ->  (103, 1030, 'Chris', 101),
+    -> (104, 1040, 'Debra', 104);
+Query OK, 14 rows affected (0.10 sec)
+Records: 14  Duplicates: 0  Warnings: 0
+
+mysql> INSERT INTO GUEST VALUES
+    -> (104, 1041, 'Debby', 104),
+    -> (105, 1051, 'Emma', 201),
+    -> (105, 1052, 'Eric', 201);
+Query OK, 3 rows affected (0.09 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+mysql> SELECT * FROM GUEST;
++-----------+----------+------------+---------+
+| CLIENT_ID | GUEST_ID | GUEST_NAME | ROOM_NO |
++-----------+----------+------------+---------+
+|       101 |     1011 | BOB        |     102 |
+|       101 |     1012 | Ben        |     102 |
+|       101 |     1013 | Beth       |     104 |
+|       101 |     1014 | Bella      |     104 |
+|       101 |     1010 | Baker      |     101 |
+|       102 |     1020 | Abel       |     102 |
+|       102 |     1021 | Awan       |     102 |
+|       102 |     1022 | Adam       |     104 |
+|       102 |     1023 | Eve        |     104 |
+|       106 |     1060 | Frodo      |     201 |
+|       106 |     1061 | Sam        |     201 |
+|       106 |     1062 | Merry      |     202 |
+|       106 |     1063 | Pippin     |     202 |
+|       103 |     1030 | Chris      |     101 |
+|       104 |     1040 | Debra      |     104 |
+|       104 |     1041 | Debby      |     104 |
+|       105 |     1051 | Emma       |     201 |
+|       105 |     1052 | Eric       |     201 |
++-----------+----------+------------+---------+
+18 rows in set (0.01 sec)
+
+mysql> ALTER TABLE ROOM
+    -> ADD PICTURES VARCHAR(250);
+Query OK, 0 rows affected (0.11 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+
+mysql> SELECT * FROM ROOM;
++---------+---------+-------------+-------+----------+
+| ROOM_NO | TYPE    | AMENITIES   | PRICE | PICTURES |
++---------+---------+-------------+-------+----------+
+|     101 | Single  | Garden View |   100 | NULL     |
+|     102 | Double  | Beach View  |   200 | NULL     |
+|     103 | Single  | Garden View |   100 | NULL     |
+|     104 | Double  | Beach View  |   200 | NULL     |
+|     201 | Single  | Garden View |   100 | NULL     |
+|     202 | Double  | Beach View  |   200 | NULL     |
+|     203 | Single  | Garden View |   100 | NULL     |
+|     204 | Double  | Beach View  |   200 | NULL     |
+|     301 | Suite   | Garden View |   500 | NULL     |
+|     302 | Suite   | Beach View  |   500 | NULL     |
+|     401 | Banquet | Roof Top    |  1000 | NULL     |
++---------+---------+-------------+-------+----------+
+11 rows in set (0.00 sec)
+
+mysql> UPDATE ROOM
+    -> SET PICTURES = 'https://www.pexels.com/photo/black-and-grey-bedspread-on-bed-and-pillow-164595/'
+    -> WHERE ROOM_NO=101;
+Query OK, 1 row affected (0.11 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> UPDATE ROOM
+    -> SET PICTURES = 'https://www.pexels.com/photo/black-and-grey-bedspread-on-bed-and-pillow-164595/'
+    -> WHERE ROOM_NO=103;
+Query OK, 1 row affected (0.07 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> UPDATE ROOM
+    -> SET PICTURES = 'https://www.pexels.com/photo/black-and-grey-bedspread-on-bed-and-pillow-164595/'
+    -> WHERE ROOM_NO=201;
+Query OK, 1 row affected (0.09 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> UPDATE ROOM
+    -> SET PICTURES = 'https://www.pexels.com/photo/black-and-grey-bedspread-on-bed-and-pillow-164595/'
+    -> WHERE ROOM_NO=203;
+Query OK, 1 row affected (0.03 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> UPDATE ROOM
+    -> SET PICTURES = 'https://www.pexels.com/photo/black-and-grey-bedspread-on-bed-and-pillow-164595/'
+    -> WHERE ROOM_NO=301;
+Query OK, 1 row affected (0.03 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> UPDATE ROOM
+    -> SET PICTURES = 'https://www.google.com/url?sa=i&source=images&cd=&cad=rja&uact=8&ved=2ahUKEwi194-25oTfAhXsmOAKHUMOBlUQjRx6BAgBEAU&url=https%3A%2F%2Fwww.booking.com%2Fhotel%2Fus%2Fbeachview-inn.html&psig=AOvVaw3WkIBuTwakKotKFFb0M-7N&ust=1543965655820839'
+    -> WHERE ROOM_NO=102;
+Query OK, 1 row affected (0.03 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> UPDATE ROOM
+    -> SET PICTURES = 'https://www.google.com/url?sa=i&source=images&cd=&cad=rja&uact=8&ved=2ahUKEwi194-25oTfAhXsmOAKHUMOBlUQjRx6BAgBEAU&url=https%3A%2F%2Fwww.booking.com%2Fhotel%2Fus%2Fbeachview-inn.html&psig=AOvVaw3WkIBuTwakKotKFFb0M-7N&ust=1543965655820839'
+    -> WHERE ROOM_NO=104;
+Query OK, 1 row affected (0.02 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> UPDATE ROOM
+    -> SET PICTURES = 'https://www.google.com/url?sa=i&source=images&cd=&cad=rja&uact=8&ved=2ahUKEwi194-25oTfAhXsmOAKHUMOBlUQjRx6BAgBEAU&url=https%3A%2F%2Fwww.booking.com%2Fhotel%2Fus%2Fbeachview-inn.html&psig=AOvVaw3WkIBuTwakKotKFFb0M-7N&ust=1543965655820839'
+    -> WHERE ROOM_NO=202;
+Query OK, 1 row affected (0.03 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> UPDATE ROOM
+    -> SET PICTURES = 'https://www.google.com/url?sa=i&source=images&cd=&cad=rja&uact=8&ved=2ahUKEwi194-25oTfAhXsmOAKHUMOBlUQjRx6BAgBEAU&url=https%3A%2F%2Fwww.booking.com%2Fhotel%2Fus%2Fbeachview-inn.html&psig=AOvVaw3WkIBuTwakKotKFFb0M-7N&ust=1543965655820839'
+    -> WHERE ROOM_NO=204;
+Query OK, 1 row affected (0.01 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> UPDATE ROOM
+    -> SET PICTURES = 'https://www.google.com/url?sa=i&source=images&cd=&cad=rja&uact=8&ved=2ahUKEwi194-25oTfAhXsmOAKHUMOBlUQjRx6BAgBEAU&url=https%3A%2F%2Fwww.booking.com%2Fhotel%2Fus%2Fbeachview-inn.html&psig=AOvVaw3WkIBuTwakKotKFFb0M-7N&ust=1543965655820839'
+    -> WHERE ROOM_NO=302;
+Query OK, 1 row affected (0.04 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> UPDATE ROOM
+    -> SET PICTURES = 'https://static1.squarespace.com/static/5755a97d1d07c0b8c3216c63/t/5b26950c6d2a73b36bcfb4c7/1529255185524/21294557_166151487267640_374366610992922624_n.jpg?format=500w'
+    -> WHERE ROOM_NO=401;
+Query OK, 1 row affected (0.08 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> SELECT * FROM ROOM;
++---------+---------+-------------+-------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| ROOM_NO | TYPE    | AMENITIES   | PRICE | PICTURES                                                                                                                                                                                                                                     |
++---------+---------+-------------+-------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+|     101 | Single  | Garden View |   100 | https://www.pexels.com/photo/black-and-grey-bedspread-on-bed-and-pillow-164595/                                                                                                                                                              |
+|     102 | Double  | Beach View  |   200 | https://www.google.com/url?sa=i&source=images&cd=&cad=rja&uact=8&ved=2ahUKEwi194-25oTfAhXsmOAKHUMOBlUQjRx6BAgBEAU&url=https%3A%2F%2Fwww.booking.com%2Fhotel%2Fus%2Fbeachview-inn.html&psig=AOvVaw3WkIBuTwakKotKFFb0M-7N&ust=1543965655820839 |
+|     103 | Single  | Garden View |   100 | https://www.pexels.com/photo/black-and-grey-bedspread-on-bed-and-pillow-164595/                                                                                                                                                              |
+|     104 | Double  | Beach View  |   200 | https://www.google.com/url?sa=i&source=images&cd=&cad=rja&uact=8&ved=2ahUKEwi194-25oTfAhXsmOAKHUMOBlUQjRx6BAgBEAU&url=https%3A%2F%2Fwww.booking.com%2Fhotel%2Fus%2Fbeachview-inn.html&psig=AOvVaw3WkIBuTwakKotKFFb0M-7N&ust=1543965655820839 |
+|     201 | Single  | Garden View |   100 | https://www.pexels.com/photo/black-and-grey-bedspread-on-bed-and-pillow-164595/                                                                                                                                                              |
+|     202 | Double  | Beach View  |   200 | https://www.google.com/url?sa=i&source=images&cd=&cad=rja&uact=8&ved=2ahUKEwi194-25oTfAhXsmOAKHUMOBlUQjRx6BAgBEAU&url=https%3A%2F%2Fwww.booking.com%2Fhotel%2Fus%2Fbeachview-inn.html&psig=AOvVaw3WkIBuTwakKotKFFb0M-7N&ust=1543965655820839 |
+|     203 | Single  | Garden View |   100 | https://www.pexels.com/photo/black-and-grey-bedspread-on-bed-and-pillow-164595/                                                                                                                                                              |
+|     204 | Double  | Beach View  |   200 | https://www.google.com/url?sa=i&source=images&cd=&cad=rja&uact=8&ved=2ahUKEwi194-25oTfAhXsmOAKHUMOBlUQjRx6BAgBEAU&url=https%3A%2F%2Fwww.booking.com%2Fhotel%2Fus%2Fbeachview-inn.html&psig=AOvVaw3WkIBuTwakKotKFFb0M-7N&ust=1543965655820839 |
+|     301 | Suite   | Garden View |   500 | https://www.pexels.com/photo/black-and-grey-bedspread-on-bed-and-pillow-164595/                                                                                                                                                              |
+|     302 | Suite   | Beach View  |   500 | https://www.google.com/url?sa=i&source=images&cd=&cad=rja&uact=8&ved=2ahUKEwi194-25oTfAhXsmOAKHUMOBlUQjRx6BAgBEAU&url=https%3A%2F%2Fwww.booking.com%2Fhotel%2Fus%2Fbeachview-inn.html&psig=AOvVaw3WkIBuTwakKotKFFb0M-7N&ust=1543965655820839 |
+|     401 | Banquet | Roof Top    |  1000 | https://static1.squarespace.com/static/5755a97d1d07c0b8c3216c63/t/5b26950c6d2a73b36bcfb4c7/1529255185524/21294557_166151487267640_374366610992922624_n.jpg?format=500w                                                                       |
++---------+---------+-------------+-------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+11 rows in set (0.00 sec)
+
+
+mysql> DELETE FROM TRANSACTIONS WHERE CLIENT_ID=106 OR CLIENT_ID=102;
+Query OK, 2 rows affected (0.04 sec)
+
+mysql> SELECT * FROM TRANSACTIONS;
++----------------+-----------+------------------+--------+--------+
+| TRANSACTION_ID | CLIENT_ID | TRANSACTION_DATE | AMOUNT | STATUS |
++----------------+-----------+------------------+--------+--------+
+|           1702 |       103 | 2017-04-04       |   2000 | PAID   |
+|           1703 |       105 | 2017-08-08       |   1500 | PAID   |
+|           1704 |       104 | 2017-09-15       |    400 | PAID   |
+|           1705 |       101 | 2017-04-17       |   1800 | PAID   |
++----------------+-----------+------------------+--------+--------+
+4 rows in set (0.00 sec)
+
+
+mysql> DELETE FROM GUEST WHERE CLIENT_ID= 103 OR CLIENT_ID=104 OR CLIENT_ID=105;
+Query OK, 5 rows affected (0.03 sec)
+
+mysql> SELECT * FROM GUEST;
++-----------+----------+------------+---------+
+| CLIENT_ID | GUEST_ID | GUEST_NAME | ROOM_NO |
++-----------+----------+------------+---------+
+|       101 |     1011 | BOB        |     102 |
+|       101 |     1012 | Ben        |     102 |
+|       101 |     1013 | Beth       |     104 |
+|       101 |     1014 | Bella      |     104 |
+|       101 |     1010 | Baker      |     101 |
+|       102 |     1020 | Abel       |     102 |
+|       102 |     1021 | Awan       |     102 |
+|       102 |     1022 | Adam       |     104 |
+|       102 |     1023 | Eve        |     104 |
+|       106 |     1060 | Frodo      |     201 |
+|       106 |     1061 | Sam        |     201 |
+|       106 |     1062 | Merry      |     202 |
+|       106 |     1063 | Pippin     |     202 |
++-----------+----------+------------+---------+
+13 rows in set (0.00 sec)
+
+mysql> insert into TRANSACTIONS VALUES
+    -> (1706, 106, '2017-08-24', 2000, 'PAID');
+Query OK, 1 row affected (0.02 sec)
+
+
+mysql> SELECT * FROM TRANSACTIONS;
++----------------+-----------+------------------+--------+--------+
+| TRANSACTION_ID | CLIENT_ID | TRANSACTION_DATE | AMOUNT | STATUS |
++----------------+-----------+------------------+--------+--------+
+|           1702 |       103 | 2017-04-04       |   2000 | PAID   |
+|           1703 |       105 | 2017-08-08       |   1500 | PAID   |
+|           1704 |       104 | 2017-09-15       |    400 | PAID   |
+|           1705 |       101 | 2017-04-17       |   1800 | PAID   |
+|           1706 |       106 | 2017-08-24       |   2000 | PAID   |
+|           1707 |       107 | 2017-04-24       |   2200 | PAID   |
++----------------+-----------+------------------+--------+--------+
+6 rows in set (0.00 sec)
+
+
+mysql> SELECT DISTINCT T.CLIENT_ID, C.NAME, T.AMOUNT
+    -> FROM TRANSACTIONS T, GUEST G, CLIENT C
+    -> WHERE C.CLIENT_ID=T.CLIENT_ID AND
+    -> G.CLIENT_ID=T.CLIENT_ID AND
+    -> G.CLIENT_ID=C.CLIENT_ID AND
+    -> T.AMOUNT IN ( SELECT MAX(T.AMOUNT) FROM TRANSACTIONS T, GUEST G WHERE G.CLIENT_ID=T.CLIENT_ID) AND T.TRANSACTION_DATE BETWEEN '2017-01-01' AND '2017-12-31';
++-----------+-------+--------+
+| CLIENT_ID | NAME  | AMOUNT |
++-----------+-------+--------+
+|       106 | Frodo |   2000 |
++-----------+-------+--------+
+1 row in set (0.00 sec)
